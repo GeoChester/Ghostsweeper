@@ -170,7 +170,7 @@ function fnv(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);
 function stream(seed){let a=seed>>>0;return function(){a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^(t>>>15),t|1);t^=t+Math.imul(t^(t>>>7),t|61);return((t^(t>>>14))>>>0)&255;};}
 function unlock(b64,phrase){const raw=atob(b64);const next=stream(fnv(phrase));const out=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)out[i]=raw.charCodeAt(i)^next();return new TextDecoder().decode(out);}
 //CODEC-END
-const PAYLOAD='EFd36Klro40OQi17Dzs5BbxAIbibfWAa/ezjb+xzOuXG',PHRASE='ghostsweeper|8';
+const PAYLOAD='EFd36Klro40OQi17D9Pul4Egwz+Mj+YU+uz/',PHRASE='ghostsweeper|8';
 
 const W=8,H=8,N=W*H,GHOSTS=8;
 const $=s=>document.querySelector(s);
@@ -505,6 +505,7 @@ function showCoords(g){
   finalBox.scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});
 }
 function showEnd(won){
+  if(won)return;
   msgT.hidden=false;
   msgT.className='msg-t '+(won?'win':'lose');
   msgT.textContent=won?'All ghosts swept!':'A ghost got you!';
