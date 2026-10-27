@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html lang="en"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Ghostsweeper</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -121,13 +121,6 @@ h1{margin:0;font:400 clamp(1.9rem,6.4vw,2.9rem)/1.05 var(--display);letter-spaci
 .flyer{position:absolute;left:0;top:0;transform-origin:50% 50%;filter:drop-shadow(0 0 14px rgba(160,255,190,.55)) drop-shadow(0 0 4px rgba(255,60,40,.5));will-change:transform}
 .cell.morph svg{animation:morph 1s ease-in both}
 @keyframes morph{0%{transform:scale(1);filter:none}50%{transform:scale(1.35) rotate(-8deg);filter:drop-shadow(0 0 10px #ff3a2a)}100%{transform:scale(1.5);opacity:0}}
-.admin{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;background:rgba(8,6,14,.88);padding:0 16px}
-.acard{width:min(100%,320px);background:#1b1626;border:1px solid var(--edge);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;color:var(--bone);font-family:var(--text)}
-.acard label{font-family:var(--display);font-size:1.3rem}
-.acard input{font:inherit;font-size:18px;padding:8px 10px;border-radius:8px;border:1px solid var(--edge);background:var(--ink);color:var(--bone)}
-.arow{display:flex;gap:8px;justify-content:flex-end}
-.arow button{font-family:var(--display);font-size:16px;min-height:44px;padding:6px 16px;border-radius:999px;border:1px solid var(--candle);background:transparent;color:var(--bone);cursor:pointer}
-.acard p{margin:0;min-height:1.2em;font-size:15px;color:#ff9a8a;font-style:italic}
 @media (prefers-reduced-motion:reduce){
   .cell{transition:none}
   .cell.boom,.cell.pop,.final.on,.final.on .coord,.cell.dance svg{animation:none}
@@ -220,7 +213,6 @@ h1{margin:0;font:400 clamp(1.9rem,6.4vw,2.9rem)/1.05 var(--display);letter-spaci
 </div>
 <div class="scare" id="scare" hidden><div class="dark" id="dark"></div><svg class="flyer" id="flyer" viewBox="-16 -4 132 132" aria-hidden="true"><use href="#g-scary"/></svg></div>
 <p class="sr" id="live" role="status" aria-live="polite"></p>
-<div class="admin" id="admin" hidden><div class="acard" role="dialog" aria-modal="true" aria-labelledby="apwl"><label id="apwl" for="apw">Password</label><input id="apw" type="password" autocomplete="off"><p id="aerr" role="status"></p><div class="arow"><button id="acancel" type="button">Cancel</button><button id="aok" type="button">Open</button></div></div></div>
 
 <script>
 (function(){
@@ -823,22 +815,6 @@ musicBtn.addEventListener('click',function(){
 
 // replay always starts again from the first, smallest house
 $('#replay').addEventListener('click',function(){setLevel(0);window.scrollTo({top:0,behavior:reduce?'auto':'smooth'});});
-// admin door: three quick taps on the title ask for the password; the right one clears the last house and plays the ending
-const ADMIN=217580182;let titleTaps=[];
-function adminHash(t){let h=2166136261;t="jar-admin|"+t;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}return h>>>0;}
-$('h1').addEventListener('pointerdown',function(){const now=performance.now();titleTaps=titleTaps.filter(function(t){return now-t<1500;});titleTaps.push(now);
-  if(titleTaps.length>=3){titleTaps=[];$('#aerr').textContent='';$('#apw').value='';$('#admin').hidden=false;setTimeout(function(){$('#apw').focus();},0);}});
-function adminClose(){$('#admin').hidden=true;}
-function adminTry(){if(adminHash($('#apw').value)!==ADMIN){$('#aerr').textContent="That's not it.";$('#apw').select();return;}
-  adminClose();
-  const box=$('#scare');box.hidden=true;[$('#flyer'),$('#dark')].forEach(function(el){el.getAnimations().forEach(function(x){x.cancel();});});
-  board.classList.remove('fade');setLevel(LEVELS.length-1);
-  started=true;place(Math.floor(N/2));
-  for(let i=0;i<N;i++)if(!mine[i]){state[i]=1;paint(i);}
-  opened=N-GHOSTS;setTimeout(win,400);}
-$('#aok').addEventListener('click',adminTry);$('#acancel').addEventListener('click',adminClose);
-$('#apw').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();adminTry();}else if(e.key==='Escape')adminClose();});
-window.__gs={get level(){return lvl;},solve:function(){if(!started){started=true;place(0);}for(let i=0;i<N;i++)if(!mine[i]&&state[i]!==1){state[i]=1;opened++;paint(i);}win();}};
 
 setLevel(0);
 })();
